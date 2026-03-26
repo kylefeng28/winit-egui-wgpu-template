@@ -1,6 +1,6 @@
 use egui::Context;
 use egui_wgpu::wgpu::{CommandEncoder, Device, Queue, StoreOp, TextureFormat, TextureView};
-use egui_wgpu::{wgpu, Renderer, ScreenDescriptor};
+use egui_wgpu::{wgpu, Renderer, RendererOptions, ScreenDescriptor};
 use egui_winit::State;
 use winit::event::WindowEvent;
 use winit::window::Window;
@@ -36,9 +36,12 @@ impl EguiRenderer {
         let egui_renderer = Renderer::new(
             device,
             output_color_format,
-            output_depth_format,
-            msaa_samples,
-            true,
+            RendererOptions {
+                depth_stencil_format: output_depth_format,
+                msaa_samples,
+                dithering: true,
+                predictable_texture_filtering: false,
+            }
         );
 
         EguiRenderer {
@@ -96,6 +99,7 @@ impl EguiRenderer {
             color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                 view: window_surface_view,
                 resolve_target: None,
+                depth_slice: None,
                 ops: egui_wgpu::wgpu::Operations {
                     load: egui_wgpu::wgpu::LoadOp::Load,
                     store: StoreOp::Store,

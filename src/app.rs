@@ -41,9 +41,7 @@ impl AppState {
                 &wgpu::DeviceDescriptor {
                     label: None,
                     required_features: features,
-                    required_limits: Default::default(),
-                    memory_hints: Default::default(),
-                    trace: Default::default()
+                    ..Default::default()
                 }
             )
             .await
